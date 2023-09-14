@@ -1,0 +1,558 @@
+definitions:
+  model.CreateEquipmentRequestBody:
+    properties:
+      availability:
+        type: boolean
+      category:
+        type: string
+      name:
+        type: string
+      rental_costs:
+        type: number
+    type: object
+  model.CreateRentalHistoryRequestBody:
+    properties:
+      equipment_id:
+        type: integer
+      rental_date:
+        type: string
+      rental_status:
+        type: string
+      return_date:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  model.Equipment:
+    properties:
+      availability:
+        type: boolean
+      category:
+        type: string
+      equipmentID:
+        type: integer
+      name:
+        type: string
+      rentalCosts:
+        type: number
+    type: object
+  model.RegisterRequestBody:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  model.RentalHistory:
+    properties:
+      equipmentID:
+        type: integer
+      rentalDate:
+        type: string
+      rentalHistoryID:
+        type: integer
+      rentalStatus:
+        type: string
+      returnDate:
+        type: string
+      userID:
+        type: integer
+    type: object
+  model.TopUpRequestBody:
+    properties:
+      deposit_amount:
+        type: number
+    type: object
+  model.UpdateEquipmentRequestBody:
+    properties:
+      availability:
+        type: boolean
+      category:
+        type: string
+      name:
+        type: string
+      rental_costs:
+        type: number
+    type: object
+  model.UpdateRentalHistoryRequestBody:
+    properties:
+      equipment_id:
+        type: integer
+      rental_date:
+        type: string
+      rental_status:
+        type: string
+      return_date:
+        type: string
+      user_id:
+        type: integer
+    type: object
+info:
+  contact:
+    email: support@example.com
+    name: API Support
+  description: This is the Manufacturer Go API for managing equipment, users, and
+    rental history.
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+  termsOfService: https://example.com/terms/
+  title: Manufacturer Go API
+  version: "1.0"
+paths:
+  /equipment:
+    get:
+      description: Retrieve a list of all available equipment
+      operationId: get-all-equipment
+      parameters:
+      - description: JWT authorization token
+        in: header
+        name: authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of equipment
+          schema:
+            items:
+              $ref: '#/definitions/model.Equipment'
+            type: array
+        "401":
+          description: JWT token missing or invalid
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to retrieve equipment
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get All Equipment
+    post:
+      consumes:
+      - application/json
+      description: Create a new equipment item
+      operationId: create-equipment
+      parameters:
+      - description: JWT authorization token
+        in: header
+        name: authorization
+        required: true
+        type: string
+      - description: Equipment details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateEquipmentRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Equipment created successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to create equipment
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create Equipment
+  /equipment/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing equipment item by ID
+      operationId: delete-equipment
+      parameters:
+      - description: JWT authorization token
+        in: header
+        name: authorization
+        required: true
+        type: string
+      - description: Equipment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Equipment deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Equipment not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to delete equipment
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete Equipment
+    put:
+      consumes:
+      - application/json
+      description: Update an existing equipment item by ID
+      operationId: update-equipment
+      parameters:
+      - description: JWT authorization token
+        in: header
+        name: authorization
+        required: true
+        type: string
+      - description: Equipment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated equipment details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateEquipmentRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Equipment updated successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Equipment not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to update equipment
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update Equipment
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Login with the provided email and password to obtain an authentication
+        token
+      operationId: login-user
+      parameters:
+      - description: User login request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.RegisterRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Invalid email or password
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to generate JWT token
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Login
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user with the provided email and password
+      operationId: register-user
+      parameters:
+      - description: User registration request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.RegisterRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User registered successfully
+          schema:
+            type: string
+        "400":
+          description: Invalid request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to hash password" "Failed to create user" "Failed to
+            send registration email
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Register a new user
+  /rental:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all rental history records
+      operationId: get-all-rental-history
+      parameters:
+      - description: JWT authorization token
+        in: header
+        name: authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of rental history records
+          schema:
+            items:
+              $ref: '#/definitions/model.RentalHistory'
+            type: array
+        "500":
+          description: Failed to retrieve rental history
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get All Rental History
+    post:
+      consumes:
+      - application/json
+      description: Create a new rental history record
+      operationId: create-rental-history
+      parameters:
+      - description: JWT authorization token
+        in: header
+        name: authorization
+        required: true
+        type: string
+      - description: Request body containing rental history information
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.CreateRentalHistoryRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Rental history record created successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "402":
+          description: Insufficient deposit amount
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: User or equipment not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Equipment is not available for rent
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to create rental history
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create Rental History
+  /rental/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a rental history record by ID
+      operationId: delete-rental-history
+      parameters:
+      - description: JWT authorization token
+        in: header
+        name: authorization
+        required: true
+        type: string
+      - description: Rental history ID to be deleted
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Rental history deleted successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Rental history not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to delete rental history
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete Rental History
+    put:
+      consumes:
+      - application/json
+      description: Update an existing rental history record
+      operationId: update-rental-history
+      parameters:
+      - description: JWT authorization token
+        in: header
+        name: authorization
+        required: true
+        type: string
+      - description: Rental history ID to be updated
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Request body containing updated rental history information
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.UpdateRentalHistoryRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Rental history updated successfully
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Rental history not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to update rental history
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update Rental History
+  /top-up:
+    post:
+      consumes:
+      - application/json
+      description: Deposit a specified amount into the user's account balance
+      operationId: top-up-user
+      parameters:
+      - description: JWT authorization token
+        in: header
+        name: authorization
+        required: true
+        type: string
+      - description: Amount to deposit
+        in: body
+        name: deposit_amount
+        required: true
+        schema:
+          $ref: '#/definitions/model.TopUpRequestBody'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Top-up successful
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid request body
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: JWT token missing or invalid
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: User not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to perform top-up" "Failed to send top-up email
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Top-Up User Account
+swagger: "2.0"
